@@ -1,8 +1,7 @@
 import 'dart:convert';
 
+import 'package:arcane_nodes/arcane_nodes.dart';
 import 'package:example/nodes.dart';
-
-import 'package:fl_nodes/fl_nodes.dart';
 
 void registerDataHandlers(FlNodeEditorController controller) {
   controller.project.registerDataHandler<Operator>(

@@ -1,9 +1,7 @@
+import 'package:arcane_nodes/src/core/controllers/node_editor/project.dart';
 import 'package:flutter/material.dart';
 
-import 'package:fl_nodes/src/core/controllers/node_editor/project.dart';
-
 import '../controllers/node_editor/core.dart';
-
 import 'entities.dart';
 
 /// Events are used to communicate between the [FlNodeEditorController] and the Widgets composing the Node Editor.

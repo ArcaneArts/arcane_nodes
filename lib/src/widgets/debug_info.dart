@@ -1,7 +1,6 @@
-import 'package:fl_nodes/src/core/models/events.dart';
+import 'package:arcane_nodes/src/core/controllers/node_editor/core.dart';
+import 'package:arcane_nodes/src/core/models/events.dart';
 import 'package:flutter/material.dart';
-
-import 'package:fl_nodes/src/core/controllers/node_editor/core.dart';
 
 class DebugInfoWidget extends StatefulWidget {
   final FlNodeEditorController controller;

@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:fl_nodes/src/core/models/events.dart';
-import 'package:fl_nodes/src/core/utils/snackbar.dart';
+import 'package:arcane_nodes/src/core/models/events.dart';
+import 'package:arcane_nodes/src/core/utils/snackbar.dart';
 
 import '../../models/entities.dart';
-
 import 'core.dart';
 
 typedef OnExecute = Future<void> Function(
@@ -248,7 +247,7 @@ class FlNodeEditorRunner {
       );
     } catch (e) {
       controller.focusNodesById({node.id});
-      showNodeEditorSnackbar(
+      nodeLog(
         'Error executing node: ${node.prototype.displayName}: $e',
         SnackbarType.error,
       );

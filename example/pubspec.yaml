@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  fl_nodes:
+  arcane_nodes:
     path: ../
   gap: ^3.0.1
   uuid: ^4.5.1

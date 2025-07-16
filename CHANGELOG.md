@@ -1,3 +1,8 @@
+# 1.0.0
+* Arcane Fork
+* Stopped spamming snackbars, turned into logs
+* Upgraded flutter_context_menu
+
 ## 0.1.0 (Beta)
 
 - Initial beta release showcasing core features.

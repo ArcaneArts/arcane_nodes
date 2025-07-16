@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 import 'dart:ui';
 
+import 'package:arcane_nodes/src/widgets/deafult_node_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +9,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
-import 'package:fl_nodes/src/widgets/deafult_node_widget.dart';
-
 import '../core/controllers/node_editor/core.dart';
 import '../core/models/entities.dart';
 import '../core/models/styles.dart';
-
 import 'builders.dart';
 
 class NodeDiffCheckData {

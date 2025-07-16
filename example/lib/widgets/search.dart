@@ -1,6 +1,5 @@
+import 'package:arcane_nodes/arcane_nodes.dart';
 import 'package:flutter/material.dart';
-
-import 'package:fl_nodes/fl_nodes.dart';
 
 class SearchWidget extends StatefulWidget {
   final FlNodeEditorController controller;

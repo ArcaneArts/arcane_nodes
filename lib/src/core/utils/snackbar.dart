@@ -1,32 +1,20 @@
-import 'package:fl_nodes/src/constants.dart';
-import 'package:flutter/material.dart';
+import 'package:fast_log/fast_log.dart';
 
 enum SnackbarType { success, error, warning, info }
 
-void showNodeEditorSnackbar(String message, SnackbarType type) {
-  late Color backgroundColor;
-
+void nodeLog(String message, SnackbarType type) {
   switch (type) {
     case SnackbarType.success:
-      backgroundColor = Colors.green;
+      success("[Arcane Nodes]: $message");
       break;
     case SnackbarType.error:
-      backgroundColor = Colors.red;
+      error("[Arcane Nodes]: $message");
       break;
     case SnackbarType.warning:
-      backgroundColor = Colors.orange;
+      warn("[Arcane Nodes]: $message");
       break;
     case SnackbarType.info:
-      backgroundColor = Colors.blue;
+      info("[Arcane Nodes]: $message");
       break;
-  }
-  if (kNodeEditorWidgetKey.currentContext != null) {
-    ScaffoldMessenger.of(kNodeEditorWidgetKey.currentContext!).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-        duration: const Duration(seconds: 3),
-      ),
-    );
   }
 }

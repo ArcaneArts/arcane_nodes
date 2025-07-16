@@ -1,10 +1,8 @@
+import 'package:arcane_nodes/src/widgets/debug_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:fl_nodes/src/widgets/debug_info.dart';
-
 import '../core/controllers/node_editor/core.dart';
-
 import 'builders.dart';
 import 'node_editor_data_layer.dart';
 

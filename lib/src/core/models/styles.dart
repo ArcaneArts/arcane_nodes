@@ -1,6 +1,5 @@
+import 'package:arcane_nodes/src/core/models/entities.dart';
 import 'package:flutter/material.dart';
-
-import 'package:fl_nodes/src/core/models/entities.dart';
 
 enum FlLineDrawMode {
   solid,

@@ -1,21 +1,18 @@
 import 'dart:math';
 
+import 'package:arcane_nodes/arcane_nodes.dart';
+import 'package:arcane_nodes/src/constants.dart';
+import 'package:arcane_nodes/src/core/controllers/node_editor/history.dart';
+import 'package:arcane_nodes/src/core/controllers/node_editor/project.dart';
+import 'package:arcane_nodes/src/core/models/events.dart';
+import 'package:arcane_nodes/src/core/utils/renderbox.dart';
+import 'package:arcane_nodes/src/core/utils/snackbar.dart';
+import 'package:arcane_nodes/src/core/utils/spatial_hash_grid.dart';
 import 'package:flutter/material.dart';
-
 import 'package:uuid/uuid.dart';
-
-import 'package:fl_nodes/fl_nodes.dart';
-import 'package:fl_nodes/src/constants.dart';
-import 'package:fl_nodes/src/core/controllers/node_editor/history.dart';
-import 'package:fl_nodes/src/core/controllers/node_editor/project.dart';
-import 'package:fl_nodes/src/core/models/events.dart';
-import 'package:fl_nodes/src/core/utils/renderbox.dart';
-import 'package:fl_nodes/src/core/utils/snackbar.dart';
-import 'package:fl_nodes/src/core/utils/spatial_hash_grid.dart';
 
 import '../../models/config.dart';
 import '../../models/entities.dart';
-
 import 'clipboard.dart';
 import 'event_bus.dart';
 import 'runner.dart';
@@ -436,19 +433,19 @@ class FlNodeEditorController {
       port1.prototype.dataType,
       port2.prototype.dataType,
     )) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Cannot connect ports of different data types: ${port1.prototype.dataType} and ${port2.prototype.dataType}',
         SnackbarType.error,
       );
       return null;
     } else if (port1.prototype.type != port2.prototype.type) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Cannot connect ports of different types: ${port1.prototype.type} and ${port2.prototype.type}',
         SnackbarType.error,
       );
       return null;
     } else if (port1.prototype.direction == port2.prototype.direction) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Cannot connect two ports with the same direction: ${port1.prototype.displayName} and ${port2.prototype.displayName}',
         SnackbarType.error,
       );
@@ -491,7 +488,7 @@ class FlNodeEditorController {
 
       // Check if the ports are compatible
       if (fromPort.prototype.direction == toPort.prototype.direction) {
-        showNodeEditorSnackbar(
+        nodeLog(
           'Cannot connect two ports of the same type: ${fromPort.prototype.displayName} and ${toPort.prototype.displayName}',
           SnackbarType.error,
         );
@@ -500,7 +497,7 @@ class FlNodeEditorController {
 
       // Check if the input port already has a link
       if (toPort.prototype.type == PortType.data && toPort.links.isNotEmpty) {
-        showNodeEditorSnackbar(
+        nodeLog(
           'Cannot connect multiple links to an data input port: ${toPort.prototype.displayName} in node ${toNode.prototype.displayName}',
           SnackbarType.error,
         );

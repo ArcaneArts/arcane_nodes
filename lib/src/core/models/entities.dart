@@ -1,10 +1,8 @@
+import 'package:arcane_nodes/arcane_nodes.dart';
+import 'package:arcane_nodes/src/core/controllers/node_editor/project.dart';
+import 'package:arcane_nodes/src/core/controllers/node_editor/runner.dart';
 import 'package:flutter/material.dart';
-
 import 'package:uuid/uuid.dart';
-
-import 'package:fl_nodes/fl_nodes.dart';
-import 'package:fl_nodes/src/core/controllers/node_editor/project.dart';
-import 'package:fl_nodes/src/core/controllers/node_editor/runner.dart';
 
 typedef FromTo = ({String from, String to, String fromPort, String toPort});
 

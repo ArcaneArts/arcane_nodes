@@ -1,13 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
 import 'package:uuid/uuid.dart';
 
 import '../../models/entities.dart';
 import '../../models/events.dart';
 import '../../utils/snackbar.dart';
-
 import 'core.dart';
 
 /// A class that allows to specify serialization and deserialization logic for custom data types.
@@ -200,7 +198,7 @@ class FlNodeEditorProject {
     try {
       jsonData = _toJson();
     } catch (e) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Failed to save project.  Unable to serialize project data.',
         SnackbarType.error,
       );
@@ -216,7 +214,7 @@ class FlNodeEditorProject {
 
     controller.eventBus.emit(SaveProjectEvent(id: const Uuid().v4()));
 
-    showNodeEditorSnackbar(
+    nodeLog(
       'Project saved successfully.',
       SnackbarType.success,
     );
@@ -237,7 +235,7 @@ class FlNodeEditorProject {
     }
 
     if (jsonData == null) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Failed to load project. Invalid project data.',
         SnackbarType.error,
       );
@@ -249,7 +247,7 @@ class FlNodeEditorProject {
     try {
       _fromJson(jsonData);
     } catch (e) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Failed to load project. Unable to deserialize project data.',
         SnackbarType.error,
       );
@@ -258,7 +256,7 @@ class FlNodeEditorProject {
 
     controller.eventBus.emit(LoadProjectEvent(id: const Uuid().v4()));
 
-    showNodeEditorSnackbar(
+    nodeLog(
       'Project loaded successfully.',
       SnackbarType.success,
     );
@@ -276,7 +274,7 @@ class FlNodeEditorProject {
 
     controller.eventBus.emit(NewProjectEvent(id: const Uuid().v4()));
 
-    showNodeEditorSnackbar(
+    nodeLog(
       'New project created successfully.',
       SnackbarType.success,
     );

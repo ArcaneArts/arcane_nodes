@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-
 import 'package:uuid/uuid.dart';
 
 import '../../../constants.dart';
@@ -10,7 +9,6 @@ import '../../models/events.dart';
 import '../../utils/json_extensions.dart';
 import '../../utils/renderbox.dart';
 import '../../utils/snackbar.dart';
-
 import 'core.dart';
 import 'event_bus.dart';
 import 'utils.dart';
@@ -84,7 +82,7 @@ class FlNodeEditorClipboard {
 
       base64Data = base64Encode(utf8.encode(jsonData));
     } catch (e) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Failed to copy nodes. Invalid clipboard data. ($e)',
         SnackbarType.error,
       );
@@ -93,7 +91,7 @@ class FlNodeEditorClipboard {
 
     await Clipboard.setData(ClipboardData(text: base64Data));
 
-    showNodeEditorSnackbar(
+    nodeLog(
       'Nodes copied to clipboard.',
       SnackbarType.success,
     );
@@ -132,7 +130,7 @@ class FlNodeEditorClipboard {
         jsonDecode(jsonData['encompassingRect']),
       );
     } catch (e) {
-      showNodeEditorSnackbar(
+      nodeLog(
         'Failed to paste nodes. Invalid clipboard data. ($e)',
         SnackbarType.error,
       );
