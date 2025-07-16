@@ -81,9 +81,9 @@ class FlNodeEditorClipboard {
       });
 
       base64Data = base64Encode(utf8.encode(jsonData));
-    } catch (e) {
+    } catch (e, es) {
       nodeLog(
-        'Failed to copy nodes. Invalid clipboard data. ($e)',
+        'Failed to copy nodes. Invalid clipboard data. ($e) $es',
         SnackbarType.error,
       );
       return '';
@@ -129,9 +129,9 @@ class FlNodeEditorClipboard {
       encompassingRect = JSONRect.fromJson(
         jsonDecode(jsonData['encompassingRect']),
       );
-    } catch (e) {
+    } catch (e, es) {
       nodeLog(
-        'Failed to paste nodes. Invalid clipboard data. ($e)',
+        'Failed to paste nodes. Invalid clipboard data. ($e) $es',
         SnackbarType.error,
       );
       return;

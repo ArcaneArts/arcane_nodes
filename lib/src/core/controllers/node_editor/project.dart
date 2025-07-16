@@ -197,9 +197,9 @@ class FlNodeEditorProject {
 
     try {
       jsonData = _toJson();
-    } catch (e) {
+    } catch (e, es) {
       nodeLog(
-        'Failed to save project.  Unable to serialize project data.',
+        'Failed to save project. Unable to serialize project data. $e, $es',
         SnackbarType.error,
       );
       return;
@@ -246,9 +246,9 @@ class FlNodeEditorProject {
 
     try {
       _fromJson(jsonData);
-    } catch (e) {
+    } catch (e, es) {
       nodeLog(
-        'Failed to load project. Unable to deserialize project data.',
+        'Failed to load project. Unable to deserialize project data. $e, $es',
         SnackbarType.error,
       );
       return;

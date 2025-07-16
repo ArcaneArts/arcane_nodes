@@ -1,3 +1,12 @@
+# 1.0.3
+* More dumb fixes to ... MANUAL???? deserialization? What was the author smoking?
+
+# 1.0.2
+* Fix dumb type casting null safe
+
+# 1.0.1
+* Show exceptions
+
 # 1.0.0
 * Arcane Fork
 * Stopped spamming snackbars, turned into logs

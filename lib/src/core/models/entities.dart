@@ -1,6 +1,7 @@
 import 'package:arcane_nodes/arcane_nodes.dart';
 import 'package:arcane_nodes/src/core/controllers/node_editor/project.dart';
 import 'package:arcane_nodes/src/core/controllers/node_editor/runner.dart';
+import 'package:fast_log/fast_log.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -477,7 +478,8 @@ final class NodeInstance {
       ),
     );
 
-    final ports = (json['ports'] as Map<String, dynamic>).map(
+    json['ports'] ??= <String, dynamic>{};
+    final ports = (_fixMap(json['ports'])).map(
       (id, portJson) {
         return MapEntry(
           id,
@@ -492,7 +494,8 @@ final class NodeInstance {
       ),
     );
 
-    final fields = (json['fields'] as Map<String, dynamic>).map(
+    json['fields'] ??= <String, dynamic>{};
+    final fields = (_fixMap(json['fields'])).map(
       (id, fieldJson) {
         return MapEntry(
           id,
@@ -545,4 +548,20 @@ NodeInstance createNode(
     state: NodeState(),
     offset: offset,
   );
+}
+
+Map<String, dynamic> _fixMap(dynamic any) {
+  if (any == null) {
+    return <String, dynamic>{};
+  }
+  if (any is Map<String, dynamic>) {
+    return any;
+  }
+  if (any is Map) {
+    return any.map((k, v) => MapEntry<String, dynamic>(k, v.toString()));
+  }
+
+  warn(
+      "Failed to convert map of ${any.runtimeType} into a Map<String, dynamic>, using empty map instead...");
+  return <String, dynamic>{};
 }
