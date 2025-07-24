@@ -1,6 +1,6 @@
 name: arcane_nodes
 description: A lightweight, scalable, and highly customizable package that empowers Flutter developers to create dynamic, interactive, and visually appealing node-based UIs.
-version: 1.0.3
+version: 1.0.7
 maintainer: Arcane Arts
 repository: https://github.com/ArcaneArts/arcane_nodes
 platforms:

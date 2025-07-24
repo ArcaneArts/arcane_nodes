@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'dart:ui';
 
@@ -375,8 +376,13 @@ class NodeEditorRenderBox extends RenderBox
 
   @override
   void performLayout() {
+    const _unbounded = BoxConstraints(
+      minWidth: 0,
+      maxWidth: 600, // <- let the node decide
+      minHeight: 0,
+      maxHeight: double.infinity,
+    );
     size = constraints.biggest;
-
     // If the child has not been laid out yet, we need to layout it.
     // Otherwise, we only need to layout it if it's within the viewport.
 
@@ -392,7 +398,7 @@ class NodeEditorRenderBox extends RenderBox
       final childParentData = child.parentData as _ParentData;
 
       child.layout(
-        BoxConstraints.loose(constraints.biggest),
+        _unbounded,
         parentUsesSize: true,
       );
 
@@ -568,7 +574,7 @@ class NodeEditorRenderBox extends RenderBox
               path = _computeStraightLinkPath(data);
               break;
             case FlLinkCurveType.bezier:
-              path = _computeBezierLinkPath(data);
+              path = _computeBezierLinkPathDirect(data);
               break;
             case FlLinkCurveType.ninetyDegree:
               path = _computeNinetyDegreesLinkPath(data);
@@ -606,7 +612,7 @@ class NodeEditorRenderBox extends RenderBox
               path = _computeStraightLinkPath(data);
               break;
             case FlLinkCurveType.bezier:
-              path = _computeBezierLinkPath(data);
+              path = _computeBezierLinkPathDirect(data);
               break;
             case FlLinkCurveType.ninetyDegree:
               path = _computeNinetyDegreesLinkPath(data);
@@ -805,7 +811,7 @@ class NodeEditorRenderBox extends RenderBox
         path = _computeStraightLinkPath(_tmpLinkData!);
         break;
       case FlLinkCurveType.bezier:
-        path = _computeBezierLinkPath(_tmpLinkData!);
+        path = _computeBezierLinkPathDirect(_tmpLinkData!);
         break;
       case FlLinkCurveType.ninetyDegree:
         path = _computeNinetyDegreesLinkPath(_tmpLinkData!);
@@ -836,7 +842,7 @@ class NodeEditorRenderBox extends RenderBox
     canvas.drawPath(path, paint);
   }
 
-  Path _computeBezierLinkPath(LinkData data) {
+  Path _computeBezierLinkPathDirect(LinkData data) {
     final Path path = Path()
       ..moveTo(data.outPortOffset.dx, data.outPortOffset.dy);
 
@@ -868,6 +874,81 @@ class NodeEditorRenderBox extends RenderBox
     );
 
     return path;
+  }
+
+  Path _computeBezierLinkPathMadScientist(LinkData data) {
+    const double kCtrl = 160; // horizontal pull for the elbows
+    const double kMargin = 24; // extra clearance above/below obstacles
+
+    // 1. Gather the rectangles that sit between the ports horizontally
+    final double left = math.min(data.outPortOffset.dx, data.inPortOffset.dx);
+    final double right = math.max(data.outPortOffset.dx, data.inPortOffset.dx);
+
+    double? topMost; // smallest y among intersecting rects
+    double? bottomMost; // largest  y among intersecting rects
+
+    for (final rect
+        in _collectObstacles(from: data.outPortOffset, to: data.inPortOffset)) {
+      if (rect.right < left || rect.left > right) continue; // no overlap
+      topMost = topMost == null ? rect.top : math.min(topMost, rect.top);
+      bottomMost =
+          bottomMost == null ? rect.bottom : math.max(bottomMost, rect.bottom);
+    }
+
+    // 2. If nothing blocks the corridor, fall back to the simple cubic
+    if (topMost == null || bottomMost == null) {
+      return _computeBezierLinkPathDirect(data);
+    }
+
+    // 3. Two candidate detour ordinates
+    final double detourUp = topMost - kMargin;
+    final double detourDown = bottomMost + kMargin;
+
+    // 4. Choose the detour with the *smaller* total vertical travel
+    final double upTravel = (data.outPortOffset.dy - detourUp).abs() +
+        (data.inPortOffset.dy - detourUp).abs();
+    final double downTravel = (data.outPortOffset.dy - detourDown).abs() +
+        (data.inPortOffset.dy - detourDown).abs();
+
+    final double detourY = upTravel <= downTravel ? detourUp : detourDown;
+
+    // 5. Build the two-elbow cubic path
+    return Path()
+      ..moveTo(data.outPortOffset.dx, data.outPortOffset.dy)
+      ..cubicTo(
+        data.outPortOffset.dx + kCtrl,
+        data.outPortOffset.dy,
+        data.outPortOffset.dx + kCtrl,
+        detourY,
+        (data.outPortOffset.dx + data.inPortOffset.dx) / 2,
+        detourY,
+      )
+      ..cubicTo(
+        data.inPortOffset.dx - kCtrl,
+        detourY,
+        data.inPortOffset.dx - kCtrl,
+        data.inPortOffset.dy,
+        data.inPortOffset.dx,
+        data.inPortOffset.dy,
+      );
+  }
+
+// unchanged except for the two new parameters so you can skip the endpoints
+  Iterable<Rect> _collectObstacles({
+    required Offset from,
+    required Offset to,
+    bool onlyVisible = true,
+    double padding = 8,
+  }) sync* {
+    final ids = onlyVisible ? visibleNodes : _childrenById.keys;
+    for (final id in ids) {
+      final rect =
+          (_childrenById[id]!.parentData as _ParentData).rect.inflate(padding);
+
+      // Don’t treat the source or destination node as an obstacle
+      if (rect.contains(from) || rect.contains(to)) continue;
+      yield rect;
+    }
   }
 
   Path _computeStraightLinkPath(LinkData data) {

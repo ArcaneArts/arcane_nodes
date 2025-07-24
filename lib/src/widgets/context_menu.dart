@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 
 bool isContextMenuVisible = false;

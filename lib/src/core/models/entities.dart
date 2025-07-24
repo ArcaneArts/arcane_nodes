@@ -230,9 +230,11 @@ final class PortInstance {
       state: PortState.fromJson(json['state'] ?? {}),
     );
 
-    instance.links = (json['links'] as List<dynamic>)
-        .map((linkJson) => Link.fromJson(linkJson))
-        .toSet();
+    List<dynamic> v = [];
+    if (json['links'] is List<dynamic>) {
+      v = json['links'];
+    }
+    instance.links = (v).map((linkJson) => Link.fromJson(linkJson)).toSet();
 
     return instance;
   }
@@ -510,7 +512,8 @@ final class NodeInstance {
       ports: ports,
       fields: fields,
       state: NodeState(isCollapsed: json['state']['isCollapsed']),
-      offset: Offset(json['offset'][0], json['offset'][1]),
+      offset:
+          Offset(json['offset'][0].toDouble(), json['offset'][1].toDouble()),
     );
 
     return instance;

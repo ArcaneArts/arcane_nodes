@@ -259,13 +259,12 @@ class _DefaultNodeWidgetState extends State<DefaultNodeWidget> {
             padding: field.prototype.style.padding,
             decoration: field.prototype.style.decoration,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Flexible(
-                  child: Text(
-                    field.prototype.displayName,
-                    style: const TextStyle(color: Colors.white70, fontSize: 13),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  field.prototype.displayName,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(width: 8),
                 Expanded(child: field.prototype.visualizerBuilder(field.data)),
@@ -393,6 +392,8 @@ class _DefaultNodeWidgetState extends State<DefaultNodeWidget> {
     overlay.insert(overlayEntry);
   }
 
+  Offset? lposition;
+
   Widget controlsWrapper(Widget child) {
     return os_detect.isAndroid || os_detect.isIOS
         ? GestureDetector(
@@ -474,74 +475,85 @@ class _DefaultNodeWidgetState extends State<DefaultNodeWidget> {
             },
             child: child,
           )
-        : ImprovedListener(
-            behavior: HitTestBehavior.translucent,
-            onPointerPressed: (event) async {
-              _isLinking = false;
-              _tempLink = null;
-
-              final locator = _isNearPort(event.position);
-              if (event.buttons == kSecondaryMouseButton) {
-                if (!widget.node.state.isSelected) {
-                  widget.controller.selectNodesById({widget.node.id});
-                }
-
-                if (locator != null && !widget.node.state.isCollapsed) {
-                  createAndShowContextMenu(
-                    context,
-                    entries: _portContextMenuEntries(
-                      event.position,
-                      locator: locator,
-                    ),
-                    position: event.position,
-                  );
-                } else if (!isContextMenuVisible) {
+        : MouseRegion(
+            onHover: (h) {
+              lposition = h.position;
+            },
+            child: GestureDetector(
+              onSecondaryTap: () {
+                if (!isContextMenuVisible && lposition != null) {
                   final entries = widget.contextMenuBuilder != null
                       ? widget.contextMenuBuilder!(context, widget.node)
                       : _defaultNodeContextMenuEntries();
                   createAndShowContextMenu(
                     context,
                     entries: entries,
-                    position: event.position,
+                    position: lposition!,
                   );
                 }
-              } else if (event.buttons == kPrimaryMouseButton) {
-                if (locator != null && !_isLinking && _tempLink == null) {
-                  _onTmpLinkStart(locator);
-                } else if (!widget.node.state.isSelected) {
-                  widget.controller.selectNodesById(
-                    {widget.node.id},
-                    holdSelection: HardwareKeyboard.instance.isControlPressed,
-                  );
-                }
-              }
-            },
-            onPointerMoved: (event) async {
-              if (_isLinking) {
-                _onTmpLinkUpdate(event.position);
-              } else if (event.buttons == kPrimaryMouseButton) {
-                _startEdgeTimer(event.position);
-                widget.controller.dragSelection(event.delta);
-              }
-            },
-            onPointerReleased: (event) async {
-              if (_isLinking) {
-                final locator = _isNearPort(event.position);
-                if (locator != null) {
-                  _onTmpLinkEnd(locator);
-                } else {
-                  createAndShowContextMenu(
-                    context,
-                    entries: _createSubmenuEntries(event.position),
-                    position: event.position,
-                    onDismiss: (value) => _onTmpLinkCancel(),
-                  );
-                }
-              } else {
-                _resetEdgeTimer();
-              }
-            },
-            child: child,
+              },
+              child: ImprovedListener(
+                behavior: HitTestBehavior.translucent,
+                onPointerPressed: (event) async {
+                  _isLinking = false;
+                  _tempLink = null;
+
+                  final locator = _isNearPort(event.position);
+                  if (event.buttons == kSecondaryMouseButton) {
+                    if (!widget.node.state.isSelected) {
+                      widget.controller.selectNodesById({widget.node.id});
+                    }
+
+                    if (locator != null && !widget.node.state.isCollapsed) {
+                      createAndShowContextMenu(
+                        context,
+                        entries: _portContextMenuEntries(
+                          event.position,
+                          locator: locator,
+                        ),
+                        position: event.position,
+                      );
+                    }
+                  } else if (event.buttons == kPrimaryMouseButton) {
+                    if (locator != null && !_isLinking && _tempLink == null) {
+                      _onTmpLinkStart(locator);
+                    } else if (!widget.node.state.isSelected) {
+                      widget.controller.selectNodesById(
+                        {widget.node.id},
+                        holdSelection:
+                            HardwareKeyboard.instance.isControlPressed,
+                      );
+                    }
+                  }
+                },
+                onPointerMoved: (event) async {
+                  if (_isLinking) {
+                    _onTmpLinkUpdate(event.position);
+                  } else if (event.buttons == kPrimaryMouseButton) {
+                    _startEdgeTimer(event.position);
+                    widget.controller.dragSelection(event.delta);
+                  }
+                },
+                onPointerReleased: (event) async {
+                  if (_isLinking) {
+                    final locator = _isNearPort(event.position);
+                    if (locator != null) {
+                      _onTmpLinkEnd(locator);
+                    } else {
+                      createAndShowContextMenu(
+                        context,
+                        entries: _createSubmenuEntries(event.position),
+                        position: event.position,
+                        onDismiss: (value) => _onTmpLinkCancel(),
+                      );
+                    }
+                  } else {
+                    _resetEdgeTimer();
+                  }
+                },
+                child: child,
+              ),
+            ),
           );
   }
 
@@ -704,6 +716,7 @@ class _DefaultNodeWidgetState extends State<DefaultNodeWidget> {
       IntrinsicHeight(
         child: IntrinsicWidth(
           child: Stack(
+            fit: StackFit.passthrough,
             key: widget.node.key,
             clipBehavior: Clip.none,
             children: [
@@ -743,7 +756,7 @@ class _DefaultNodeWidgetState extends State<DefaultNodeWidget> {
                       padding: const EdgeInsets.all(12),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: _generateLayout(),
                       ),
                     ),

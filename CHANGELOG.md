@@ -1,3 +1,9 @@
+# 1.0.5
+* Fix int double parsing in deserialization
+
+# 1.0.4
+* Fix shader def
+
 # 1.0.3
 * More dumb fixes to ... MANUAL???? deserialization? What was the author smoking?
 
